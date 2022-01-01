@@ -34,8 +34,8 @@ contract lamb is ERC721Enumerable , Ownable {
   } 
 
     function costed() internal view returns(uint256 _cost) {
-        if (supply <= 5000) {
-            return 0.03 ether;
+         if ( onlyWhitelisted == true) {            
+             return 0.03 ether;
         }
          else {
             return 0.04 ether;
