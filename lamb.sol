@@ -15,12 +15,13 @@ contract lamb is ERC721Enumerable , Ownable {
   uint256 public cost = 0.04 ether;
   uint256 public maxSupply = 10000;
   uint256 public maxMintAmount = 20;
-  uint256 public nftPerAddressLimit = 3;
+  uint256 public nftPerAddressLimit = 5;
   bool public paused = false;
   bool public revealed = false;
   bool public onlyWhitelisted = true;
   address[] public whitelistedAddresses;
   mapping(address => uint256) public addressMintedBalance;
+
 
   constructor(
     string memory _name,
@@ -48,10 +49,11 @@ contract lamb is ERC721Enumerable , Ownable {
      
     function mint(uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
+        uint256 ownerMintedCount = addressMintedBalance[msg.sender];
         require (!paused);
         require (_mintAmount > 0);
         require (supply + _mintAmount <= 9850);
-        require (_mintAmount <= maxMintAmount);
+        require (_mintAmount + ownerMintedCount <= nftPerAddressLimit);
         require (msg.value >= costed() * _mintAmount);
         
         
@@ -59,18 +61,24 @@ contract lamb is ERC721Enumerable , Ownable {
         if( onlyWhitelisted == true) {
             require(isWhitelisted(msg.sender), "user is not isWhitelisted");
             require (supply + _mintAmount <= 5000 , "NFTs granted for presale had been already minted ");
+
             }
         
         for( uint256 i = 1 ; i <= _mintAmount; i++){
+            addressMintedBalance[msg.sender]++;
              _safeMint(msg.sender ,supply + i);
         }
 }
 
     function OwnerMint(uint256 _mintAmount) public onlyOwner {
         uint256 supply = totalSupply();
+        uint256 ownerMintedCount = addressMintedBalance[msg.sender];
         require (!paused);
         require (_mintAmount > 0);
-        require (supply + _mintAmount <= 155);
+        require (supply + _mintAmount <= maxMintAmount);
+        require (_mintAmount + ownerMintedCount <= 150);
+
+
 
          for( uint256 i = 1 ; i <= _mintAmount; i++){
              _safeMint(msg.sender ,supply + i);
