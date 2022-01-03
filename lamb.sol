@@ -16,7 +16,6 @@ contract lamb is ERC721Enumerable , Ownable {
   uint256 public maxSupply = 10000;
   uint256 public maxMintAmount = 20;
   uint256 public nftPerAddressLimit = 3;
-  uint256 supply = totalSupply();
   bool public paused = false;
   bool public revealed = false;
   bool public onlyWhitelisted = true;
@@ -33,6 +32,7 @@ contract lamb is ERC721Enumerable , Ownable {
     setNotRevealedURI(_initNotRevealedUri);
   } 
 
+
     function costed() internal view returns(uint256 _cost) {
          if ( onlyWhitelisted == true) {            
              return 0.03 ether;
@@ -47,6 +47,7 @@ contract lamb is ERC721Enumerable , Ownable {
 
      
     function mint(uint256 _mintAmount) public payable {
+        uint256 supply = totalSupply();
         require (!paused);
         require (_mintAmount > 0);
         require (supply + _mintAmount <= 9850);
@@ -60,17 +61,18 @@ contract lamb is ERC721Enumerable , Ownable {
             require (supply + _mintAmount <= 5000 , "NFTs granted for presale had been already minted ");
             }
         
-        for( uint i = 0 ; i >= _mintAmount;){
+        for( uint256 i = 1 ; i <= _mintAmount; i++){
              _safeMint(msg.sender ,supply + i);
         }
 }
 
     function OwnerMint(uint256 _mintAmount) public onlyOwner {
+        uint256 supply = totalSupply();
         require (!paused);
         require (_mintAmount > 0);
-        require (supply + _mintAmount <= supply);
+        require (supply + _mintAmount <= 155);
 
-         for( uint i = 0 ; i >= _mintAmount;){
+         for( uint256 i = 1 ; i <= _mintAmount; i++){
              _safeMint(msg.sender ,supply + i);
         }
 
@@ -96,6 +98,9 @@ contract lamb is ERC721Enumerable , Ownable {
     return false;
   }
 
+   function _baseURI() internal view virtual override returns (string memory) {
+    return baseURI;
+  }
   function walletOfOwner(address _owner)
     public
     view
