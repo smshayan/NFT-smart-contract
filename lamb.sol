@@ -8,14 +8,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract lamb is ERC721Enumerable , Ownable {
-   using Strings for uint256;
+  using Strings for uint256;
 
   string public baseURI;
   string public baseExtension = ".json";
   string public notRevealedUri;
-  uint256 public cost = 0.04 ether;
   uint256 public maxSupply = 10000;
-  uint256 public maxMintAmount = 20;
   uint256 public nftPerAddressLimit = 5;
   bool public paused = false;
   bool public revealed = false;
@@ -44,18 +42,14 @@ contract lamb is ERC721Enumerable , Ownable {
         }
     }
 
-
-
-
-     
-    function mint(uint256 _mintAmount) public payable {
+    function mint(uint256 _mintAmount)  payable public {
         uint256 supply = totalSupply();
         uint256 ownerMintedCount = addressMintedBalance[msg.sender];
-        require (!paused);
-        require (_mintAmount > 0);
-        require (supply + _mintAmount <= 9850);
-        require (_mintAmount + ownerMintedCount <= nftPerAddressLimit);
-        require (msg.value >= costed() * _mintAmount);
+        require (!paused , "contract is paused");
+        require (_mintAmount > 0 , "please put a value");
+        require (supply + _mintAmount <= 9850 , "supply has ended");
+        require (_mintAmount + ownerMintedCount <= nftPerAddressLimit ,"you cant mint more" );
+        require (msg.value >= costed() * _mintAmount , "plz put some money");
         
         
 
@@ -74,14 +68,13 @@ contract lamb is ERC721Enumerable , Ownable {
     function OwnerMint(uint256 _mintAmount) public onlyOwner {
         uint256 supply = totalSupply();
         uint256 ownerMintedCount = addressMintedBalance[msg.sender];
-        require (!paused);
-        require (_mintAmount > 0);
-        require (supply + _mintAmount <= maxMintAmount);
-        require (_mintAmount + ownerMintedCount <= 150);
+        require (!paused , "contract is paused");
+        require (_mintAmount > 0 , "please put a value");
+        require (supply + _mintAmount <= maxSupply , "supply has ended");
+        require (_mintAmount + ownerMintedCount <= 150 , "owner cannot mint more");
 
-
-
-         for( uint256 i = 1 ; i <= _mintAmount; i++){
+        for( uint256 i = 1 ; i <= _mintAmount; i++){
+            addressMintedBalance[msg.sender]++;
              _safeMint(msg.sender ,supply + i);
         }
 
@@ -107,9 +100,10 @@ contract lamb is ERC721Enumerable , Ownable {
     return false;
   }
 
-   function _baseURI() internal view virtual override returns (string memory) {
+  function _baseURI() internal view virtual override returns (string memory) {
     return baseURI;
   }
+  
   function walletOfOwner(address _owner)
     public
     view
@@ -153,13 +147,15 @@ contract lamb is ERC721Enumerable , Ownable {
   function setNftPerAddressLimit(uint256 _limit) public onlyOwner {
     nftPerAddressLimit = _limit;
   }
-  
-  function setCost(uint256 _newCost) public onlyOwner {
-    cost = _newCost;
-  }
 
+  function cost() public view returns(uint256) {
+    uint256 currentCost = costed();
+    return currentCost ;
+  }
+  
+  
   function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner {
-    maxMintAmount = _newmaxMintAmount;
+    nftPerAddressLimit = _newmaxMintAmount;
   }
 
   function setBaseURI(string memory _newBaseURI) public onlyOwner {
