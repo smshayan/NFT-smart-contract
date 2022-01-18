@@ -1,3 +1,11 @@
+/**
+ *Submitted for verification at polygonscan.com on 2022-01-09
+*/
+
+/**
+ *Submitted for verification at Etherscan.io on 2022-01-08
+*/
+
 // SPDX-License-Identifier: MIT
 
 // File: @openzeppelin/contracts/utils/Counters.sol
@@ -1140,7 +1148,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 
 
-contract test is ERC721, Ownable {
+contract blingbite is ERC721, Ownable {
   using Strings for uint256;
   using Counters for Counters.Counter;
 
@@ -1153,7 +1161,7 @@ contract test is ERC721, Ownable {
   uint256 public cost = 0.01 ether;
   uint256 public maxSupply = 10000;
   uint256 public maxMintAmountPerTx = 5;
-  
+  uint64 public wlNFTs = 500 ;
   
 
   bool public paused = false;
@@ -1165,7 +1173,7 @@ contract test is ERC721, Ownable {
 
   mapping(address => uint256) public addressMintedBalance;
 
-  constructor() ERC721("test", "tt") {
+  constructor() ERC721("blingbite", "BB") {
     setHiddenMetadataUri("ipfs://QmWjHf9gRizv9LVMini45AayMMfFfyPgko4umw5htnSvFz/hidden_metadata.json");
   }
 
@@ -1196,7 +1204,7 @@ contract test is ERC721, Ownable {
     
     if( onlyWhitelisted == true) {
             require(isWhitelisted(msg.sender), "user is not isWhitelisted");
-            require (supply.current() + _mintAmount <= 1500 , "NFTs granted for presale had been already minted ");
+            require (supply.current() + _mintAmount <= wlNFTs , "NFTs granted for presale had been already minted ");
           }
       
 
@@ -1273,6 +1281,10 @@ contract test is ERC721, Ownable {
 
   function setOnlyWhitelisted(bool _state) public onlyOwner {
     onlyWhitelisted = _state;
+  }
+
+  function changeWLNFTs(uint64 _num) public onlyOwner {
+   wlNFTs = _num ;
   }
   
   function whitelistUsers(address[] calldata _users) public onlyOwner {
